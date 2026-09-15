@@ -4,12 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "kuvy"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
+    "kopilogs"
 ]
 
 [project.scripts]
-debug = "kuvy.main:main"
+kuvv = "kuvy.main:main"
 
 [tool.kuvy.run-paths]
 main = "src/kuvy/main.py"

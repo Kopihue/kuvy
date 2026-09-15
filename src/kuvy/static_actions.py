@@ -22,7 +22,6 @@ def create_project(name: str):
         [build-system]
         requires = ["hatchling"]
         build-backend = "hatchling.build"
-
         [project]
         name = "{name}"
         version = "0.1.0"
