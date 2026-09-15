@@ -1,3 +1,6 @@
-hola = "hola.py"
+diccionario = {
+    "hola": {"hola": 4},
+}
 
-print("_".join(hola.split(".")))
+diccionario.update({"pene": {}})
+print(diccionario)

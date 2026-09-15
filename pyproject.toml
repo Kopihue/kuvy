@@ -1,12 +1,14 @@
 [build-system]
-requires = ["hatchling"]
+requires = [
+    "hatchling",
+]
 build-backend = "hatchling.build"
 
 [project]
 name = "kuvy"
 version = "0.2.0"
 dependencies = [
-    "kopilogs"
+    "kopilogs",
 ]
 
 [project.scripts]

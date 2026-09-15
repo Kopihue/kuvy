@@ -3,8 +3,10 @@ import sys
 
 class KuvyArgs:
     def __init__(self):
-        self.new: None | bool = None
-        self.new_name: None | str = None
+        self.static: bool = False
+        self.new: None | str = None
+        self.help: None | bool = None
+        self.run: None | str = None
 
     def read(self):
         def get_arg(args: Iterator) -> str | None:
@@ -14,13 +16,32 @@ class KuvyArgs:
                 return None
 
         args = iter(sys.argv[1:])
+        arg = get_arg(args)
 
-        while arg := get_arg(args):
-            match arg:
-                case "new":
-                    self.new = True
+        if not arg:
+            self.static = True
+            self.help = True
+            return
 
-                    if arg := get_arg(args):
-                        self.new_name = arg
-                    else:
-                        raise ValueError("\"new\" requires the project name to create it!")
+        match arg:
+            case "new":
+                self.static = True
+
+                if arg := get_arg(args):
+                    self.new = arg
+                else:
+                    raise ValueError("\"new\" requires the project name to create it!")
+
+            case "help":
+                self.static = True
+                self.help = True
+
+            case "run":
+                if arg := get_arg(args):
+                    self.run = arg
+                else:
+                    self.run = "main"
+
+            case _:
+                self.static = True
+                self.help = True
