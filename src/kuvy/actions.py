@@ -38,6 +38,12 @@ def new(name: str):
         """
     )
 
+    README = dedent(
+        f"""\
+        # {name}
+        """
+    )
+
     project = Path.cwd().joinpath(name)
     
     if project.exists():
@@ -70,6 +76,10 @@ def new(name: str):
         if file.name == "main.py":
             with open(file, "w") as f:
                 f.write(MAIN)
+
+        if file.name == "README.md":
+            with open(file, "w") as f:
+                f.write(README)
 
     virtualenv = venv.EnvBuilder()
     virtualenv.create(project.joinpath(".venv"))
