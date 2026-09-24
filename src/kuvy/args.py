@@ -30,7 +30,7 @@ class Args:
             match arg:
                 case "help":
                     self.help = True
-                    
+
                 case "new":
                     if arg := get_arg(args):
                         self.new = arg

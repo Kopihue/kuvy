@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "kuvy"
 version = "0.1.0"
-description = "Minimal-lightweight project manager for Python"
+description = "Minimal and lightweight project manager for Python"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
