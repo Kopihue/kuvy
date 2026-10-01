@@ -18,7 +18,7 @@ class ActionsUtils:
                 break
 
         if not venv:
-            raise FileExistsError("Not in a Python virtual environment!")
+            raise FileNotFoundError("Not in a Python virtual environment!")
 
         self.venv = venv
         self.project = self.venv.parent

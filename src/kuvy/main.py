@@ -22,10 +22,18 @@ def main() -> int:
             print(e)
             return 1
 
-        print(f"Succesfully created {args.new}!")
+        if args.new == "project":
+            print("Project name not specified, falling back to \"project\"")
+
+        print(f"Succesfully created \"{args.new}\"!")
         return 0
 
-    actions = Actions()
+    try:
+        actions = Actions()
+    except FileNotFoundError as e:
+        print(e)
+        return 1
+
     if args.run:
         try:
             actions.run(args.run, args=args.run_args)
