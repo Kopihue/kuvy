@@ -22,9 +22,6 @@ def main() -> int:
             print(e)
             return 1
 
-        if args.new == "project":
-            print("Project name not specified, falling back to \"project\"")
-
         print(f"Succesfully created \"{args.new}\"!")
         return 0
 

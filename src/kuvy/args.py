@@ -6,7 +6,7 @@ import sys
 class Args:
     def __init__(self):
         self.help:      bool         = False
-        self.new:       str          = "project"
+        self.new:       str          = ""
         self.run:       str          = ""
         self.run_args:  list[str]    = []
         self.install:   list[str]    = []
