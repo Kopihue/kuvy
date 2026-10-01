@@ -1,16 +1,22 @@
 [build-system]
-requires = ["hatchling"]
+requires = [
+    "hatchling",
+]
 build-backend = "hatchling.build"
 
 [project]
 name = "kuvy"
 version = "0.1.0"
-description = "Minimal and lightweight project manager for Python"
+description = "Lightweight project manager for Python, inspired in Cargo."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
-
+    "tomli-w",
 ]
 
 [project.scripts]
 kuvy = "kuvy:main.main"
+
+[tool.kuvy.run]
+main = "src/kuvy/main.py"
+tests = "tests/tests.py"

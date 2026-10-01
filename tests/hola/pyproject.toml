@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hola"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ""
+dependencies = [
+
+]
+
+[project.scripts]
+hola = "hola:main.main"
+
+[tool.kuvy.run]
+main = "src/hola/main.py"
+tests = "tests/tests.py"

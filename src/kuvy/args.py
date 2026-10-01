@@ -35,5 +35,17 @@ class Args:
                     if arg := get_arg(args):
                         self.new = arg
 
+                case "run":
+                    self.run = "main"
+
+                    while arg := get_arg(args):
+                        if arg == "--":
+                            while arg := get_arg(args):
+                                self.run_args.append(arg)
+                            return
+
+                        else:
+                            self.run = arg
+
                 case _:
                     self.unknown = True
