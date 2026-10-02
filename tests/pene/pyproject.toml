@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pene"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ""
+dependencies = [
+
+]
+
+[project.scripts]
+pene = "pene:main.main"
+
+[tool.kuvy.run]
+main = "src/pene/main.py"
+tests = "tests/tests.py"

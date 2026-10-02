@@ -6,13 +6,21 @@ from kuvy.actions import (
     new,
 )
 
+from kopilogs import log, Log
+from kopilogs import paint
+Log.text = True
+
 import sys
 
 def main() -> int:
     args = Args()
     args.read()
 
-    if args.help:
+    if args.unknown:
+        log("Not a valid option: try \"help\"").warning()
+        return 1
+
+    elif args.help:
         print("help")
         return 0
 
@@ -20,24 +28,30 @@ def main() -> int:
         try:
             new(args.new)
         except FileExistsError as e:
-            print(e)
+            log(e).error()
             return 1
 
-        print(f"Succesfully created \"{args.new}\"!")
+        log(
+            f"Successfully created:",
+            paint(args.new).bold().green(),
+        ).success()
         return 0
 
     try:
         actions_kuvy = ActionsKuvy()
         actions_pip = ActionsPip()
+    except RuntimeError as e:
+        log(e).error()
+        return 1
     except FileNotFoundError as e:
-        print(e)
+        log(e).error()
         return 1
 
     if args.run:
         try:
             actions_kuvy.run(args.run, args=args.run_args)
         except ValueError as e:
-            print(e)
+            log(e).error()
 
     elif args.install:
         actions_pip.install(args.install)
