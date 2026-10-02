@@ -59,9 +59,41 @@ class ActionsUtils:
         with open(self.pyproject, "wb") as f:
             tomli_w.dump(kuvy, f)
 
+    def generate_pyproject_content(self):
+        with open(self.pyproject, "wb") as f:
+            tomli_w.dump(self.pyproject_data, f)
+    
+    def add_dependencies(self, packages: list[str]):
+        try:
+            dependencies = self.pyproject_data["project"]["dependencies"]
+        except KeyError:
+            self.pyproject_data["project"]["dependencies"] = []
+            self.generate_pyproject_content()
+            dependencies = self.pyproject_data["project"]["dependencies"]
+
+        for package in packages:
+            if package not in dependencies:
+                self.pyproject_data["project"]["dependencies"].append(package)
+
+        self.generate_pyproject_content()
+
 class Actions(ActionsUtils):
     def __init__(self):
         super().__init__()
+
+    def pip(self, action: str, packages: list[str]):
+        match action:
+            case "install":
+                subprocess.run([
+                    "pip",
+                    "install",
+                    *packages,
+                ])
+
+                self.add_dependencies(packages)
+            
+            case _:
+                raise ValueError("Not a valid pip action!")
 
     def run(self, file: str, args: list[str] = []):
         try:
@@ -80,11 +112,11 @@ class Actions(ActionsUtils):
             run = self.get_kuvy_field()["run"]
 
         try:
-            file = run[file]
+            file_path = self.project.joinpath(run[file])
         except KeyError:
             raise ValueError(f"{file} to execute is not in tool.kuvy.run!")
 
-        subprocess.run([self.python, file, *args])
+        subprocess.run([self.python, file_path, *args])
 
 def new(name: str):
     MAIN = dedent(

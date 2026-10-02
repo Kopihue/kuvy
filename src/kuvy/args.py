@@ -47,5 +47,9 @@ class Args:
                         else:
                             self.run = arg
 
+                case "install":
+                    while arg := get_arg(args):
+                        self.install.append(arg)
+
                 case _:
                     self.unknown = True

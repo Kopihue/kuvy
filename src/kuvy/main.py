@@ -37,6 +37,9 @@ def main() -> int:
         except ValueError as e:
             print(e)
 
+    elif args.install:
+        actions.pip(action="install", packages=args.install)
+
     return 0
 
 if __name__ == "__main__":

@@ -6,16 +6,17 @@ build-backend = "hatchling.build"
 
 [project]
 name = "kuvy"
-version = "1.1.2"
+version = "1.1.3"
 description = "Lightweight project manager for Python, inspired in Cargo."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "tomli-w",
+    "requests",
 ]
 
 [project.scripts]
-kuvy = "kuvy:main.main"
+kuuvy = "kuvy:main.main"
 
 [tool.kuvy.run]
 main = "src/kuvy/main.py"
