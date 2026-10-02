@@ -225,7 +225,10 @@ def new(name: str):
             with open(file, "w") as f:
                 f.write(README)
 
-    virtualenv = venv.EnvBuilder()
+    virtualenv = venv.EnvBuilder(
+        with_pip=True,
+        upgrade_deps=True,
+    )
     virtualenv.create(project.joinpath(".venv"))
 
 def help():
