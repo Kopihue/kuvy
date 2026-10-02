@@ -12,11 +12,10 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "tomli-w",
-    "requests",
 ]
 
 [project.scripts]
-kuuvy = "kuvy:main.main"
+kuvy = "kuvy:main.main"
 
 [tool.kuvy.run]
 main = "src/kuvy/main.py"

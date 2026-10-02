@@ -11,7 +11,7 @@ class Args:
         self.run_args:  list[str]    = []
         self.install:   list[str]    = []
         self.uninstall: list[str]    = []
-        self.update:    list[str]    = []
+        self.upgrade:   list[str]    = []
         self.build:     bool         = False
         self.upload:    bool         = False
 
@@ -50,6 +50,14 @@ class Args:
                 case "install":
                     while arg := get_arg(args):
                         self.install.append(arg)
+
+                case "uninstall":
+                    while arg := get_arg(args):
+                        self.uninstall.append(arg)
+
+                case "upgrade":
+                    while arg := get_arg(args):
+                        self.upgrade.append(arg)
 
                 case _:
                     self.unknown = True

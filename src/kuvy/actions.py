@@ -5,7 +5,7 @@ import tomllib
 import tomli_w
 import subprocess
 
-class ActionsUtils:
+class Actions:
     def __init__(self):
         current = Path().cwd()
         
@@ -29,77 +29,79 @@ class ActionsUtils:
         with open(self.pyproject, "rb") as f:
             self.pyproject_data = tomllib.load(f)
 
-    def get_kuvy_field(self) -> dict:
-        try:
-            return self.pyproject_data["tool"]["kuvy"]
-        except KeyError:
-            self.generate_kuvy_field()
-            return self.pyproject_data["tool"]["kuvy"]
-
-    def generate_kuvy_field(self):
-        field = {
-            "tool": {
-                "kuvy": {
-                    "run": {
-                        "main": f"src/{self.project_name}/main.py",
-                        "tests": "tests/tests.py"
-                    }
-                }
-            }
-        }
-
-        self.pyproject_data.update(field)
-        with open(self.pyproject, "wb") as f:
-            tomli_w.dump(self.pyproject_data, f)
-
-    def generate_content_kuvy_field(self, content: dict):
-        kuvy = self.pyproject_data
-        kuvy.update(content)
-
-        with open(self.pyproject, "wb") as f:
-            tomli_w.dump(kuvy, f)
-
     def generate_pyproject_content(self):
         with open(self.pyproject, "wb") as f:
             tomli_w.dump(self.pyproject_data, f)
     
-    def add_dependencies(self, packages: list[str]):
+
+class ActionsPip(Actions):
+    def __init__(self):
+        super().__init__()
         try:
-            dependencies = self.pyproject_data["project"]["dependencies"]
+            self.dependencies = self.pyproject_data["project"]["dependencies"]
         except KeyError:
             self.pyproject_data["project"]["dependencies"] = []
             self.generate_pyproject_content()
-            dependencies = self.pyproject_data["project"]["dependencies"]
 
+        self.pip3 = self.venv.joinpath("bin", "pip3")
+        if not self.pip3.exists():
+            raise RuntimeError("Pip3 is not installed!")
+
+    def install(self, packages: list[str]):
+        subprocess.run([
+            self.pip3,
+            "install",
+            *packages,
+        ])
+
+        self._add_dependencies(packages)
+
+    def uninstall(self, packages: list[str]):
+        subprocess.run([
+            self.pip3,
+            "uninstall",
+            *packages
+        ])
+
+        self._remove_dependencies(packages)
+
+    def upgrade(self, packages: list[str]):
+        subprocess.run([
+            self.pip3,
+            "install",
+            "--upgrade",
+            *packages,
+        ])
+
+        self._add_dependencies(packages)
+
+    def _add_dependencies(self, packages: list[str]):
+        changed = False
         for package in packages:
-            if package not in dependencies:
+            if package not in self.dependencies:
+                changed = True
                 self.pyproject_data["project"]["dependencies"].append(package)
 
-        self.generate_pyproject_content()
+        if changed:
+            self.generate_pyproject_content()
 
-class Actions(ActionsUtils):
+    def _remove_dependencies(self, packages: list[str]):
+        changed = False
+        for package in packages:
+            if package in self.dependencies:
+                changed = True
+                self.pyproject_data["project"]["dependencies"].remove(package)
+
+        if changed:
+            self.generate_pyproject_content()
+
+class ActionsKuvy(Actions):
     def __init__(self):
         super().__init__()
-
-    def pip(self, action: str, packages: list[str]):
-        match action:
-            case "install":
-                subprocess.run([
-                    "pip",
-                    "install",
-                    *packages,
-                ])
-
-                self.add_dependencies(packages)
-            
-            case _:
-                raise ValueError("Not a valid pip action!")
-
-    def run(self, file: str, args: list[str] = []):
         try:
-            run = self.get_kuvy_field()["run"]
+            self.field = self.pyproject_data["tool"]["kuvy"]
         except KeyError:
-            self.generate_content_kuvy_field({
+            self._generate_content_kuvy_field({
                 "tool": {
                     "kuvy": {
                         "run": {
@@ -109,7 +111,23 @@ class Actions(ActionsUtils):
                     }
                 }
             })
-            run = self.get_kuvy_field()["run"]
+            self.field = self.pyproject_data["tool"]["kuvy"]
+
+    def run(self, file: str, args: list[str] = []):
+        try:
+            run = self.field["run"]
+        except KeyError:
+            self._generate_content_kuvy_field({
+                "tool": {
+                    "kuvy": {
+                        "run": {
+                            "main": f"src/{self.project_name}/main.py",
+                            "tests": "tests/tests.py"
+                        }
+                    }
+                }
+            })
+            run = self.field["run"]
 
         try:
             file_path = self.project.joinpath(run[file])
@@ -117,6 +135,12 @@ class Actions(ActionsUtils):
             raise ValueError(f"{file} to execute is not in tool.kuvy.run!")
 
         subprocess.run([self.python, file_path, *args])
+
+    def _generate_content_kuvy_field(self, content: dict):
+        self.pyproject_data.update(content)
+
+        with open(self.pyproject, "wb") as f:
+            tomli_w.dump(self.pyproject_data, f)
 
 def new(name: str):
     MAIN = dedent(

@@ -1,6 +1,7 @@
 from kuvy.args import Args
 from kuvy.actions import (
-    Actions,
+    ActionsPip,
+    ActionsKuvy,
     help,
     new,
 )
@@ -26,19 +27,26 @@ def main() -> int:
         return 0
 
     try:
-        actions = Actions()
+        actions_kuvy = ActionsKuvy()
+        actions_pip = ActionsPip()
     except FileNotFoundError as e:
         print(e)
         return 1
 
     if args.run:
         try:
-            actions.run(args.run, args=args.run_args)
+            actions_kuvy.run(args.run, args=args.run_args)
         except ValueError as e:
             print(e)
 
     elif args.install:
-        actions.pip(action="install", packages=args.install)
+        actions_pip.install(args.install)
+
+    elif args.uninstall:
+        actions_pip.uninstall(args.uninstall)
+
+    elif args.upgrade:
+        actions_pip.upgrade(args.upgrade)
 
     return 0
 
